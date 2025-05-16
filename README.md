@@ -62,4 +62,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Develop - [@Qwanwin](https://t.me/Qwanwin)
 
 Project Link: [https://github.com/Qwanwin/AndrolineHook](https://github.com/Qwanwin/AndrolineHook)
-```

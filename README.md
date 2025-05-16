@@ -1,6 +1,5 @@
 # AndrolineHook
-AndrolineHook is a lightweight C++ library for runtime memory hooking and patching in Android apps. It supports library detection, offset modification, and original byte restoration.
-
+AndrolineHook is a C++ based hooking and memory patching library designed for Android systems. Its main focus is to replace machine instructions (opcodes) at specific memory addresses within an application's process during runtime.
 ## 📋 Requirements
 
 - Android NDK

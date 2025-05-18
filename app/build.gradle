@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.dev.androline'
+    compileSdk 33
+    ndkVersion "24.0.8215888"
+
+    defaultConfig {
+        applicationId "com.dev.androline"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+        
+        vectorDrawables {
+            useSupportLibrary true
+        }
+
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
+}
+
+
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'org.javassist:javassist:3.29.2-GA'
+    implementation 'net.bytebuddy:byte-buddy:1.14.9'
+    implementation 'net.bytebuddy:byte-buddy-android:1.14.9'
+    implementation 'com.github.tiann:FreeReflection:3.1.0'
+    implementation 'androidx.annotation:annotation:1.6.0'
+    
+}

@@ -1,0 +1,230 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/res/layout/activity_main.xml",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/java/com/dev/androline/MainActivity.java",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 251,
+          "line": 10
+        },
+        "start": {
+          "column": 0,
+          "index": 250,
+          "line": 10
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/build.gradle",
+      "selection": {
+        "end": {
+          "column": 4,
+          "index": 1342,
+          "line": 60
+        },
+        "start": {
+          "column": 4,
+          "index": 1342,
+          "line": 60
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/build.gradle",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/cpp/CMakeLists.txt",
+      "selection": {
+        "end": {
+          "column": 17,
+          "index": 175,
+          "line": 7
+        },
+        "start": {
+          "column": 17,
+          "index": 175,
+          "line": 7
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/cpp/androline.h",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 1034,
+          "line": 29
+        },
+        "start": {
+          "column": 1,
+          "index": 1034,
+          "line": 29
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/cpp/androline.cpp",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 2758,
+          "line": 98
+        },
+        "start": {
+          "column": 1,
+          "index": 2758,
+          "line": 98
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/settings.gradle",
+      "selection": {
+        "end": {
+          "column": 14,
+          "index": 354,
+          "line": 18
+        },
+        "start": {
+          "column": 14,
+          "index": 354,
+          "line": 18
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/gradlew",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/gradle.properties",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/local.properties",
+      "selection": {
+        "end": {
+          "column": 65,
+          "index": 65,
+          "line": 0
+        },
+        "start": {
+          "column": 65,
+          "index": 65,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/AndroidManifest.xml",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/.cxx/Debug/r1d5dp1i/hash_key.txt",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/cpp/AndroHook.hpp",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 2473,
+          "line": 42
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/cpp/AndroUtils.hpp",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 2650,
+          "line": 85
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/androline/app/src/main/cpp/androline.h"
+}

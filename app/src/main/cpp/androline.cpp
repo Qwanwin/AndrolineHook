@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include "AndroUtils.hpp"
+#include "AndroScanner.hpp"
 
 namespace Androline {
     std::string Memory::originalBytes;
@@ -95,5 +96,44 @@ namespace Androline {
         } else {
             return WriteHex(addr, originalBytes.c_str());
         }
+    }
+
+    std::vector<uintptr_t> Memory::scanPattern(const char* pattern, const char* mask) {
+        return AndroScanner::Scanner::findPattern(pattern, mask);
+    }
+
+    std::vector<uintptr_t> Memory::scanHex(const char* hexPattern) {
+        return AndroScanner::Scanner::findHex(hexPattern);
+    }
+
+    uintptr_t Memory::resolveSymbol(const char* libName, const char* symName) {
+        return AndroScanner::SymbolResolver::findSymbol(libName, symName);
+    }
+
+    std::string Memory::findLibraryPath(const char* libName) {
+        return AndroScanner::SymbolResolver::findLibraryPath(libName);
+    }
+
+    void* Memory::robustDlopen(const char* libName, int flags) {
+        void* handle = nullptr;
+        
+        
+        handle = dlopen(libName, flags);
+        if (handle) return handle;
+
+        std::string fullPath = findLibraryPath(libName);
+        if (!fullPath.empty()) {
+            handle = dlopen(fullPath.c_str(), flags);
+        }
+        
+        return handle;
+    }
+
+    bool Memory::writeMemory(uintptr_t address, const std::vector<uint8_t>& data) {
+        return AndroUtils::MemoryUtils::writeMemory(address, data);
+    }
+
+    std::vector<uint8_t> Memory::readMemory(uintptr_t address, size_t length) {
+        return AndroUtils::MemoryUtils::readMemory(address, length);
     }
 }

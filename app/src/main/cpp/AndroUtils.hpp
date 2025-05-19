@@ -2,6 +2,9 @@
 #include <elf.h>
 #include <link.h>
 #include <sys/mman.h>
+#include <string>
+#include <vector>
+#include <sstream>
 
 namespace AndroUtils {
     struct ElfW_Sym {
@@ -59,6 +62,18 @@ namespace AndroUtils {
         static bool reprotect(uintptr_t addr, size_t len) {
             return protect(addr, len, PROT_READ | PROT_EXEC);
         }
+
+        static std::vector<uint8_t> readMemory(uintptr_t address, size_t length) {
+            std::vector<uint8_t> buffer(length);
+            memcpy(buffer.data(), (void*)address, length);
+            return buffer;
+        }
+
+        static bool writeMemory(uintptr_t address, const std::vector<uint8_t>& data) {
+            if (!unprotect(address, data.size())) return false;
+            memcpy((void*)address, data.data(), data.size());
+            return reprotect(address, data.size());
+        }
     };
 
     class StringUtils {
@@ -81,6 +96,16 @@ namespace AndroUtils {
                 output[i] = (uint8_t)strtol(byte, nullptr, 16);
             }
             return true;
+        }
+
+        static std::vector<uint8_t> parseHexString(const std::string& hex) {
+            std::vector<uint8_t> bytes;
+            for (size_t i = 0; i < hex.length(); i += 2) {
+                std::string byteString = hex.substr(i, 2);
+                uint8_t byte = (uint8_t)strtol(byteString.c_str(), nullptr, 16);
+                bytes.push_back(byte);
+            }
+            return bytes;
         }
     };
 }

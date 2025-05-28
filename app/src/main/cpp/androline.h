@@ -1,17 +1,20 @@
 #pragma once
-
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
+#include <mutex>
 #include <android/log.h>
 #include <dlfcn.h>
+#include "AndroWriteData.hpp"
 
-#define TAG "Androline"
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__)
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__)
 
-#define OBFUSCATE(str) str
+#define ANDROLINE_TAG "Androline"
+#define ANDROLINE_LOGI(...) __android_log_print(ANDROID_LOG_INFO, ANDROLINE_TAG, __VA_ARGS__)
+#define ANDROLINE_LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, ANDROLINE_TAG, __VA_ARGS__)
+#define ANDROLINE_LOGE(...) __android_log_print(ANDROID_LOG_ERROR, ANDROLINE_TAG, __VA_ARGS__)
+
+#define OBFUSCATE(str) AndroUtils::StringUtils::xor_encrypt(str, sizeof(str) - 1, "secret_key").c_str()
 
 namespace Androline {
     class Memory {
@@ -30,9 +33,8 @@ namespace Androline {
         static std::vector<uint8_t> readMemory(uintptr_t address, size_t length);
         
     private:
-        static bool WriteHex(uintptr_t address, const char* hex);
-        static void SaveOriginalBytes(uintptr_t address, size_t len);
-        static std::string originalBytes;
         static std::string findLibraryPath(const char* libName);
+        static std::map<std::string, uintptr_t> libraryBaseCache;
+        static std::mutex memoryMutex;
     };
 }

@@ -4,7 +4,8 @@ AndrolineHook is a C++ based hooking and memory patching library designed for An
 
 - Android NDK
 - C++ Standard Library
-- AndroUtils.hpp (included)
+- AndroUtils.hpp (included)  "add in your header cpp"
+- AndroWriteData.hpp (included) "add in your header cpp"
 
 ## 🔍 Example Usage
 

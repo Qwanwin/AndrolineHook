@@ -4,11 +4,15 @@
 #include <fcntl.h>
 #include <string>
 #include <sstream>
+#include <cinttypes>
 #include "AndroUtils.hpp"
 #include "AndroScanner.hpp"
+#include "AndroWriteData.hpp"
 
 namespace Androline {
-    std::string Memory::originalBytes;
+    
+    std::map<std::string, uintptr_t> Memory::libraryBaseCache;
+    std::mutex Memory::memoryMutex;
 
     bool Memory::Initialize() {
         return true;
@@ -24,77 +28,68 @@ namespace Androline {
     }
 
     uintptr_t Memory::getLibraryBase(const char* libName) {
+        std::lock_guard<std::mutex> lock(memoryMutex);
+        
+        auto it = libraryBaseCache.find(libName);
+        if (it != libraryBaseCache.end()) {
+            return it->second;
+        }
+
         char line[512];
         FILE* fp = fopen("/proc/self/maps", "rt");
         if (fp != nullptr) {
             while (fgets(line, sizeof(line), fp)) {
                 if (strstr(line, libName)) {
+                    uintptr_t base = (uintptr_t)strtoul(line, nullptr, 16);
                     fclose(fp);
-                    return (uintptr_t)strtoul(line, nullptr, 16);
+                    libraryBaseCache[libName] = base;
+                    return base;
                 }
             }
             fclose(fp);
         }
+        ANDROLINE_LOGE("Failed to find base address for %s", libName);
         return 0;
     }
 
     uintptr_t Memory::string2Offset(const char* offset) {
+        if (!offset) {
+            ANDROLINE_LOGE("Invalid offset string");
+            return 0;
+        }
         return (uintptr_t)strtoul(offset, nullptr, 16);
     }
 
-    void Memory::SaveOriginalBytes(uintptr_t address, size_t len) {
-        originalBytes.clear();
-        uint8_t* ptr = (uint8_t*)address;
-        for (size_t i = 0; i < len; i++) {
-            char byte[3];
-            snprintf(byte, sizeof(byte), "%02X", ptr[i]);
-            originalBytes += byte;
-        }
-    }
-
-    bool Memory::WriteHex(uintptr_t address, const char* hex) {
-        size_t len = strlen(hex) / 2;
-        uint8_t* bytes = new uint8_t[len];
-        
-        if (!AndroUtils::StringUtils::str2hex(hex, bytes, len)) {
-            delete[] bytes;
-            return false;
-        }
-
-        if (!AndroUtils::MemoryUtils::unprotect(address, len)) {
-            delete[] bytes;
-            return false;
-        }
-
-        memcpy((void*)address, bytes, len);
-        AndroUtils::MemoryUtils::reprotect(address, len);
-        
-        delete[] bytes;
-        return true;
-    }
-
     bool Memory::patchOffset(const char* libName, uintptr_t offset, const char* hex, bool restore) {
+        std::lock_guard<std::mutex> lock(memoryMutex);
+        
         uintptr_t base = getLibraryBase(libName);
-        if (base == 0) return false;
+        if (base == 0) {
+            ANDROLINE_LOGE("Failed to get base address for %s", libName);
+            return false;
+        }
 
         uintptr_t address = base + offset;
         
         if (restore) {
-            SaveOriginalBytes(address, strlen(hex)/2);
-            return WriteHex(address, hex);
+            return AndroWriteData::Writer::writeHex(address, hex, true);
         } else {
-            return WriteHex(address, originalBytes.c_str());
+            return AndroWriteData::Writer::restoreBytes(address);
         }
     }
 
     bool Memory::patchOffsetSym(uintptr_t addr, const char* hex, bool restore) {
-        if (addr == 0) return false;
+        std::lock_guard<std::mutex> lock(memoryMutex);
+        
+        if (addr == 0) {
+            ANDROLINE_LOGE("Invalid symbol address");
+            return false;
+        }
 
         if (restore) {
-            SaveOriginalBytes(addr, strlen(hex)/2);
-            return WriteHex(addr, hex);
+            return AndroWriteData::Writer::writeHex(addr, hex, true);
         } else {
-            return WriteHex(addr, originalBytes.c_str());
+            return AndroWriteData::Writer::restoreBytes(addr);
         }
     }
 
@@ -115,22 +110,29 @@ namespace Androline {
     }
 
     void* Memory::robustDlopen(const char* libName, int flags) {
+        std::lock_guard<std::mutex> lock(memoryMutex);
+        
         void* handle = nullptr;
-        
-        
+        dlerror(); 
         handle = dlopen(libName, flags);
-        if (handle) return handle;
+        if (handle) {
+            return handle;
+        }
 
-        std::string fullPath = findLibraryPath(libName);
+        ANDROLINE_LOGE("dlopen failed for %s: %s", libName, dlerror());
+        std::string fullPath = AndroScanner::SymbolResolver::findLibraryPath(libName);
         if (!fullPath.empty()) {
             handle = dlopen(fullPath.c_str(), flags);
+            if (!handle) {
+                ANDROLINE_LOGE("dlopen failed for %s: %s", fullPath.c_str(), dlerror());
+            }
         }
         
         return handle;
     }
 
     bool Memory::writeMemory(uintptr_t address, const std::vector<uint8_t>& data) {
-        return AndroUtils::MemoryUtils::writeMemory(address, data);
+        return AndroWriteData::Writer::writeBytes(address, data, true);
     }
 
     std::vector<uint8_t> Memory::readMemory(uintptr_t address, size_t length) {

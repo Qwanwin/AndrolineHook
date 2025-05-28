@@ -5,6 +5,14 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <cctype>
+#include <unistd.h>
+#include <android/log.h> 
+
+
+#define UTILS_TAG "AndroUtils"
+#define UTILS_LOGI(...) __android_log_print(ANDROID_LOG_INFO, UTILS_TAG, __VA_ARGS__)
+#define UTILS_LOGE(...) __android_log_print(ANDROID_LOG_ERROR, UTILS_TAG, __VA_ARGS__)
 
 namespace AndroUtils {
     struct ElfW_Sym {
@@ -89,8 +97,18 @@ namespace AndroUtils {
         }
 
         static bool str2hex(const char* hex, uint8_t* output, size_t len) {
-            if (strlen(hex) != len * 2) return false;
+            if (!hex || strlen(hex) != len * 2) {
+                UTILS_LOGE("Invalid hex string length: %zu, expected: %zu", hex ? strlen(hex) : 0, len * 2);
+                return false;
+            }
             
+            for (size_t i = 0; i < strlen(hex); ++i) {
+                if (!std::isxdigit(hex[i])) {
+                    UTILS_LOGE("Invalid hex character at position %zu: %c", i, hex[i]);
+                    return false;
+                }
+            }
+
             for (size_t i = 0; i < len; i++) {
                 char byte[3] = {hex[i*2], hex[i*2+1], '\0'};
                 output[i] = (uint8_t)strtol(byte, nullptr, 16);
@@ -100,12 +118,31 @@ namespace AndroUtils {
 
         static std::vector<uint8_t> parseHexString(const std::string& hex) {
             std::vector<uint8_t> bytes;
+            if (hex.length() % 2 != 0) {
+                UTILS_LOGE("Invalid hex string length: %zu", hex.length());
+                return bytes;
+            }
+
             for (size_t i = 0; i < hex.length(); i += 2) {
                 std::string byteString = hex.substr(i, 2);
+                if (!std::all_of(byteString.begin(), byteString.end(), ::isxdigit)) {
+                    UTILS_LOGE("Invalid hex characters in: %s", byteString.c_str());
+                    return {};
+                }
                 uint8_t byte = (uint8_t)strtol(byteString.c_str(), nullptr, 16);
                 bytes.push_back(byte);
             }
             return bytes;
+        }
+
+        static std::string xor_encrypt(const char* input, size_t len, const char* key) {
+            if (!input || !key) return "";
+            std::string result = input;
+            size_t keyLen = strlen(key);
+            for (size_t i = 0; i < len; ++i) {
+                result[i] ^= key[i % keyLen];
+            }
+            return result;
         }
     };
 }
